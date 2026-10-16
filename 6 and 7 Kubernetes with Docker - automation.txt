@@ -1,0 +1,89 @@
+Step 1: Verify tools
+Run in Ubuntu/WSL terminal with Docker Desktop running:
+docker --version
+kubectl version --client
+kind version
+
+
+Step 2: Create the Kubernetes cluster
+kind create cluster --name week7-cluster
+kubectl get nodes
+
+
+Step 3: Create deployment and service files
+Create webapp-deployment.yaml:
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: webapp-deployment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: webapp
+  template:
+    metadata:
+      labels:
+        app: webapp
+    spec:
+      containers:
+        - name: webapp
+          image: nginx:latest
+          ports:
+            - containerPort: 80
+
+
+Create webapp-service.yaml:
+apiVersion: v1
+kind: Service
+metadata:
+  name: webapp-service
+spec:
+  type: NodePort
+  selector:
+    app: webapp
+  ports:
+    - port: 80
+      targetPort: 80
+      nodePort: 30080
+
+
+Step 4: Deploy the application
+kubectl apply -f webapp-deployment.yaml
+kubectl apply -f webapp-service.yaml
+
+
+Step 5: Verify deployment and service
+kubectl get deployments
+kubectl get pods
+kubectl get services
+kubectl get nodes -o wide
+
+
+Step 6: Access the application
+For Windows with a local Kind cluster, the NodePort may not be accessible directly. Use port forwarding:
+kubectl port-forward service/webapp-service 8080:80
+
+
+Open http://localhost:8080. You should see the Nginx welcome page.
+Step 7: Automate deployment with a shell script
+Create deploy-app.sh:
+#!/bin/bash
+kind create cluster --name week7-cluster
+kubectl apply -f webapp-deployment.yaml
+kubectl apply -f webapp-service.yaml
+kubectl get pods
+kubectl get services
+echo "Application deployed successfully!"
+
+
+Make it executable and run it:
+chmod +x deploy-app.sh
+./deploy-app.sh
+
+
+Note: Since Step 2 already creates the cluster, run the script on a fresh setup or remove the kind create cluster line if the cluster already exists.
+Step 8: Clean up
+kubectl delete -f webapp-service.yaml
+kubectl delete -f webapp-deployment.yaml
+kind delete cluster --name week7-clusters

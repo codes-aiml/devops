@@ -1,0 +1,61 @@
+Step 1: Start Docker Desktop
+Install and open Docker Desktop. Wait until the Docker engine is running.
+Open PowerShell and verify:
+docker --version
+docker info
+
+
+Step 2: Create your project
+mkdir week5-flask-container
+cd week5-flask-container
+code .
+
+
+If code . doesn't work, open the folder manually in VS Code.
+
+Step 3: Create these three files
+app.py
+
+requirements.txt
+
+Dockerfile
+
+
+app.py
+from flask import Flaskapp = Flask(__name__)@app.route('/')def home():    return "Hello from Week 5 Docker!"app.run(host='0.0.0.0', port=5000)
+
+
+
+requirements.txt
+flask
+
+
+Dockerfile
+FROM python:3.9
+WORKDIR /app
+COPY . /app
+RUN pip install --no-cache-dir -r requirements.txt
+EXPOSE 5000
+CMD ["python", "app.py"]
+
+
+Step 4: Build the image
+Run in the VS Code terminal (PowerShell):
+docker build -t week5-flask-app .
+
+
+Step 5: Run the container
+docker run -d --name week5-flask-web -p 5000:5000 week5-flask-app
+
+
+Step 6: Check and open
+docker ps
+
+
+Open this URL in Chrome:
+http://localhost:5000Expected output: Hello from Week 5 Docker!
+
+Step 7: View logs and clean up
+docker logs week5-flask-web
+docker stop week5-flask-web
+docker rm week5-flask-web

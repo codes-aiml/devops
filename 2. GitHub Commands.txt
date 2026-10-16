@@ -1,0 +1,21 @@
+git config --global user.name "Student"
+git config --global user.email "student@gmail.com"
+
+git init
+git status
+git add .
+git commit -m "Add initial project files"
+
+git log --oneline
+git branch feature
+git switch feature
+
+git switch main
+git merge feature
+
+git remote add origin https://github.com/username/project.git
+git branch -M main
+git push -u origin main
+
+git pull origin main
+git clone https://github.com/username/project.git

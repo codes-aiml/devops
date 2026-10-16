@@ -1,0 +1,26 @@
+import unittest
+
+def add(a, b): return a + b
+def multiply(a, b): return a * b
+
+class TestAPI(unittest.TestCase):
+    def test_add(self):
+        self.assertEqual(add(10, 20), 30)
+
+    def test_multiply(self):
+        self.assertEqual(multiply(4, 5), 20)
+
+    def test_negative(self):
+        self.assertEqual(add(-5, 8), 3)
+
+    def test_zero(self):
+        self.assertEqual(multiply(7, 0), 0)
+
+if __name__ == "__main__":
+    unittest.main()
+
+
+
+HOW TO EXCEUTE:-
+save file as app.py
+in terminal, python app.py

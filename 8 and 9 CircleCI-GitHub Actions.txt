@@ -1,0 +1,58 @@
+Step 1: Create project files
+ci-cd-demo/
+├── calculator.py
+├── test_calculator.py
+└── .github/workflows/python-app.yml
+
+
+Step 2: calculator.py
+def add(a, b): return a + bdef multiply(a, b): return a * bif __name__ == "__main__":    print("Addition:", add(15, 25))    print("Multiplication:", multiply(4, 6))
+
+
+
+Output:
+Addition: 40
+Multiplication: 24
+
+
+Step 3: test_calculator.py
+import unittestfrom calculator import add, multiplyclass TestCalculator(unittest.TestCase):    def test_add(self):        self.assertEqual(add(15, 25), 40)    def test_multiply(self):        self.assertEqual(multiply(4, 6), 24)    def test_negative(self):        self.assertEqual(add(-5, 10), 5)if __name__ == "__main__":    unittest.main()
+
+
+
+Step 4: .github/workflows/python-app.yml
+name: Python CI Pipeline
+
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python calculator.py
+      - run: python -m unittest test_calculator.py
+
+
+Step 5: Run locally
+python calculator.py
+python -m unittest test_calculator.py
+
+
+Step 6: Push to GitHub
+git init
+git add .
+git commit -m "Add CI pipeline and tests"
+git branch -M main
+git remote add origin https://github.com/YOUR_USERNAME/ci-cd-demo.git
+git push -u origin main
+
+
+Step 7: Verify
+1. Open your GitHub repository.
+2. Click Actions.
+3. Select Python CI Pipeline.
+4. Check that the workflow succeeds and all three tests pass.

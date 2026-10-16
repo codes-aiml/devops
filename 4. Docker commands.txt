@@ -1,0 +1,46 @@
+Step 1: Check Docker Version
+sudo docker --version
+
+
+Step 2: Pull Ubuntu Image
+docker pull ubuntu:20.04
+
+
+Step 3: List Images
+docker images
+
+
+Step 4: Run a Container
+docker run -it ubuntu:20.04 bash
+
+
+ls
+exit
+
+
+Step 5: List Containers
+docker ps
+docker ps -a
+
+
+Step 6: Stop and Remove Container
+docker stop <container_id>
+docker rm <container_id>
+docker ps -a
+
+
+Step 7: Run Nginx Web Server
+docker pull nginx
+docker run -d -p 8080:80 --name week4-web nginx
+
+
+Step 8: Verify Container
+docker ps
+
+
+Step 9: View Container Logs
+docker logs week4-web
+
+
+Step 10: Open in Browser
+http://localhost:8080

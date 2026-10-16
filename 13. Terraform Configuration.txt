@@ -1,0 +1,106 @@
+Step 1: Install Terraform
+1. Download Terraform: https://developer.hashicorp.com/terraform/install
+2. Extract terraform.exe to C:\Terraform.
+3. Add C:\Terraform to your Windows Path environment variable.
+4. Open PowerShell and run:
+terraform version
+
+
+Step 2: Install AWS CLI
+Download and install: https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html
+Verify installation:
+aws --version
+
+
+Configure AWS credentials:
+aws configure
+
+
+Enter your AWS Access Key, Secret Access Key, default region (ap-south-1), and output format (json).
+Verify credentials:
+aws sts get-caller-identity
+
+
+Step 3: Create Terraform Project
+mkdir project
+cd project
+notepad main.tf
+
+
+Paste the following code into main.tf and save it.
+terraform {
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 5.0"
+    }
+  }
+}
+
+provider "aws" {
+  region = "ap-south-1"
+}
+
+data "aws_ami" "ubuntu" {
+  most_recent = true
+  owners      = ["099720109477"]
+
+  filter {
+    name   = "name"
+    values = ["ubuntu/images/hvm-ssd-gp3/ubuntu-noble-24.04-amd64-server-*"]
+  }
+
+  filter {
+    name   = "virtualization-type"
+    values = ["hvm"]
+  }
+}
+
+resource "aws_instance" "example" {
+  ami           = data.aws_ami.ubuntu.id
+  instance_type = "t2.micro"
+
+  tags = {
+    Name = "Terraform-Ubuntu-Instance"
+  }
+}
+
+output "instance_id" {
+  value = aws_instance.example.id
+}
+
+output "public_ip" {
+  value = aws_instance.example.public_ip
+}
+
+
+Step 4: Initialize Terraform
+terraform init
+
+
+Step 5: Validate Configuration
+terraform validate
+
+
+Step 6: Preview Infrastructure
+terraform plan
+
+
+Step 7: Create EC2 Instance
+terraform apply
+
+
+Type yes when prompted.
+Step 8: Verify Resources
+terraform show
+terraform state list
+terraform output
+
+
+Step 9: Destroy Resources
+terraform destroy
+
+
+Type yes when prompted.
+Expected output:
+Destroy complete! Resources: 1 destroyed.

@@ -1,0 +1,114 @@
+Step 1: Launch an EC2 instance
+- Launch an Ubuntu Server instance on AWS.
+- Allow SSH (port 22) from your IP.
+- Allow Grafana (port 3000) from your IP only.
+Step 2: Update packages
+sudo apt-get update
+sudo apt-get upgrade -y
+
+
+Step 3: Install Grafana
+sudo apt-get install -y apt-transport-https software-properties-common wget gpg
+sudo mkdir -p /etc/apt/keyrings
+wget -q -O - https://apt.grafana.com/gpg.key | sudo gpg --dearmor -o /etc/apt/keyrings/grafana.gpg
+sudo chmod 644 /etc/apt/keyrings/grafana.gpg
+echo "deb [signed-by=/etc/apt/keyrings/grafana.gpg] https://apt.grafana.com stable main" | sudo tee /etc/apt/sources.list.d/grafana.list
+sudo apt-get update
+sudo apt-get install -y grafana
+sudo systemctl enable --now grafana-server
+sudo systemctl status grafana-server
+
+
+Open http://EC2-PUBLIC-IP:3000. Default login is commonly admin / admin; change the password when prompted.
+Step 4: Install Docker
+sudo apt-get install -y docker.io
+sudo systemctl enable --now docker
+docker --version
+sudo docker ps
+
+
+Step 5: Run Loki and Promtail using Docker
+Create a directory:
+mkdir -p ~/grafana-config
+cd ~/grafana-config
+
+
+Create docker-compose.yml:
+services:
+  loki:
+    image: grafana/loki:3.5.0
+    ports:
+      - "127.0.0.1:3100:3100"
+    command: -config.file=/etc/loki/local-config.yaml
+    restart: unless-stopped
+
+  promtail:
+    image: grafana/promtail:3.5.0
+    volumes:
+      - /var/log:/var/log:ro
+      - /var/log/journal:/var/log/journal:ro
+      - ./promtail-config.yml:/etc/promtail/config.yml:ro
+    command: -config.file=/etc/promtail/config.yml
+    depends_on:
+      - loki
+    restart: unless-stopped
+
+
+Create promtail-config.yml:
+server:
+  http_listen_port: 9080
+  grpc_listen_port: 0
+
+positions:
+  filename: /tmp/positions.yaml
+
+clients:
+  - url: http://loki:3100/loki/api/v1/push
+
+scrape_configs:
+  - job_name: system
+    static_configs:
+      - targets:
+          - localhost
+        labels:
+          job: system
+          __path__: /var/log/*.log
+
+
+Start the services:
+sudo docker compose up -d
+sudo docker ps
+sudo docker logs loki
+sudo docker logs promtail
+
+
+Check Loki:
+curl http://localhost:3100/ready
+curl http://localhost:3100/metrics
+
+
+Step 6: Configure Grafana to use Loki
+1. Open http://EC2-PUBLIC-IP:3000.
+2. Go to Connections → Data sources → Add data source.
+3. Select Loki.
+4. Set the URL to http://localhost:3100.
+5. Click Save & test.
+Because Loki is bound to the host's loopback address, Grafana can reach it locally.
+Step 7: View logs
+1. Open Explore in Grafana.
+2. Select the Loki data source.
+3. Enter this LogQL query:
+{job="system"}
+
+
+4. Click Run query to display log entries.
+Step 8: Troubleshooting
+sudo systemctl status grafana-server
+sudo docker ps
+sudo docker logs loki
+sudo docker logs promtail
+
+
+Step 9: Cleanup
+cd ~/grafana-config
+sudo docker compose down

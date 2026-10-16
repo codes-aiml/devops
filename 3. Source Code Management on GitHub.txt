@@ -1,0 +1,39 @@
+Step 1: Create Project
+mkdir StudentAPI
+cd StudentAPI
+
+
+Step 2: Initialize Git
+git init
+
+
+Step 3: Check Status
+git status
+
+
+Step 4: Stage Source Code
+git add server.js
+
+
+Step 5: Commit Source Code
+git commit -m "Create student management API"
+
+
+Step 6: Connect to GitHub
+git branch -M main
+git remote add origin https://github.com/YOUR_USERNAME/StudentAPI.git
+git remote -v
+
+
+Step 7: Upload Project
+git push -u origin main
+
+
+Step 8: Update Source Code
+git add server.js
+git commit -m "Document student API"
+git push
+
+
+Step 9: Verify Commit History
+git log --oneline

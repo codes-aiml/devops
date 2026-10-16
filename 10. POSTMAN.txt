@@ -1,0 +1,55 @@
+Step 1: Install Postman
+Download and install it from Postman Downloads.
+Step 2: Test GET request
+- Method: GET
+- URL: https://jsonplaceholder.typicode.com/posts/1
+- Click Send.
+Step 3: Test POST request
+- Method: POST
+- URL: https://jsonplaceholder.typicode.com/posts
+- Select Body → raw → JSON.
+{
+  "title": "Postman API Test",
+  "body": "Testing POST request manually",
+  "userId": 1
+}
+
+
+Click Send.
+Step 4: Test PUT request
+- Method: PUT
+- URL: https://jsonplaceholder.typicode.com/posts/1
+- Body → raw → JSON:
+{
+  "id": 1,
+  "title": "Updated title",
+  "body": "Updated post content",
+  "userId": 1
+}
+
+
+Step 5: Test PATCH request
+- Method: PATCH
+- URL: https://jsonplaceholder.typicode.com/posts/1
+- Body → raw → JSON:
+{
+  "title": "Partially updated title"
+}
+
+
+Step 6: Test DELETE request
+- Method: DELETE
+- URL: https://jsonplaceholder.typicode.com/posts/1
+- Click Send.
+Step 7: Test query parameters
+- Method: GET
+- URL: https://jsonplaceholder.typicode.com/posts?userId=1
+Alternatively, open the Params tab and enter userId as the key and 1 as the value.
+Step 8: Inspect response details
+For each request, check:
+- Status code, such as 200 OK or 201 Created.
+- Response body.
+- Response time.
+- Headers.
+Step 9: Save requests
+Create a collection named Manual API Testing and save your GET, POST, PUT, PATCH, and DELETE requests.
